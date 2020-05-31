@@ -15,6 +15,10 @@ class CreateInstitutesTable extends Migration
     {
         Schema::create('institutes', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('board');
+            $table->string('logo')->nullable();
+            $table->boolean('status')->default(true)->comment('1: Active, 0: Inactive');
             $table->timestamps();
         });
     }

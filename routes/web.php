@@ -50,6 +50,9 @@ Route::prefix('/superadmin')->name('superadmin.')->namespace('Superadmin')->grou
         Route::post('/plans','PlansController@store')->name('plans.store');
         Route::patch('/plans/{plan}','PlansController@update')->name('plans.update');
         Route::delete('/plans/{plan}','PlansController@delete')->name('plans.delete');
+
+        Route::get('/institutes','InstitutesController@index')->name('institutes.index');
+        Route::post('/institutes','InstitutesController@store')->name('institutes.store');
     });
 
 });
