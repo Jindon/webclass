@@ -30,8 +30,8 @@ Route::prefix('/superadmin')->name('superadmin.')->namespace('Superadmin')->grou
         Route::namespace('Auth')->group(function(){
 
             //Login Routes
-            Route::get('/login','LoginController@showLoginForm')->name('login');
-            Route::post('/login','LoginController@login');
+            Route::get('/login','LoginController@showLoginForm')->name('loginForm');
+            Route::post('/login','LoginController@login')->name('login');
             Route::post('/logout','LoginController@logout')->name('logout');
 
             //Forgot Password Routes
@@ -48,6 +48,8 @@ Route::prefix('/superadmin')->name('superadmin.')->namespace('Superadmin')->grou
         Route::get('/home','HomeController@index')->name('home');
         Route::get('/plans','PlansController@index')->name('plans.index');
         Route::post('/plans','PlansController@store')->name('plans.store');
+        Route::patch('/plans/{plan}','PlansController@update')->name('plans.update');
+        Route::delete('/plans/{plan}','PlansController@delete')->name('plans.delete');
     });
 
 });

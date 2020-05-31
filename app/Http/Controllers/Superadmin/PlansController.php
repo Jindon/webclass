@@ -24,6 +24,26 @@ class PlansController extends Controller
         return redirect()->route('superadmin.plans.index');
     }
 
+    public function update(Request $request, Plan $plan)
+    {
+        $this->validator($request);
+
+        $plan->update($request->all());
+
+        return redirect()->route('superadmin.plans.index')->with([
+            'message' => 'Plan updated successfully!'
+        ]);
+    }
+
+    public function delete(Plan $plan)
+    {
+        $plan->delete();
+
+        return redirect()->route('superadmin.plans.index')->with([
+            'message' => 'Plan deleted successfully!'
+        ]);
+    }
+
     private function validator(Request $request)
     {
         $request->validate([

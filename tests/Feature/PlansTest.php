@@ -5,12 +5,11 @@ namespace Tests\Feature;
 use App\Models\Plan;
 use App\Models\Superadmin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class PlansTest extends TestCase
 {
-    use WithFaker, RefreshDatabase;
+    use RefreshDatabase;
 
     /** @test */
     public function superadmin_can_create_a_plan()
@@ -28,6 +27,38 @@ class PlansTest extends TestCase
         $this->actingAs($superadmin, 'superadmin')
             ->get(route('superadmin.plans.index'))
             ->assertSee($attributes['name']);
+    }
+
+    /** @test */
+    public function superadmin_can_update_a_plan()
+    {
+        $superadmin = factory(Superadmin::class)->create();
+        $plan = factory(Plan::class)->create();
+
+        $attributes = factory(Plan::class)->raw();
+
+        $this->actingAs($superadmin, 'superadmin')
+            ->patch(route('superadmin.plans.update', $plan->id), $attributes)
+            ->assertRedirect(route('superadmin.plans.index'))
+            ->assertSessionHas(['message' => 'Plan updated successfully!']);
+
+        $this->assertDatabaseHas('plans', $attributes);
+    }
+
+    /** @test */
+    public function superadmin_can_delete_a_plan()
+    {
+        $this->withoutExceptionHandling();
+
+        $superadmin = factory(Superadmin::class)->create();
+        $plan = factory(Plan::class)->create();
+
+        $this->actingAs($superadmin, 'superadmin')
+            ->delete(route('superadmin.plans.delete', $plan->id))
+            ->assertRedirect(route('superadmin.plans.index'))
+            ->assertSessionHas(['message' => 'Plan deleted successfully!']);
+
+        $this->assertDeleted('plans', $plan->toArray());
     }
 
     /** @test */
