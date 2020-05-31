@@ -11,6 +11,9 @@ use Illuminate\Support\Str;
 class Institute extends Model
 {
     protected $fillable = ['name', 'board', 'logo'];
+    protected $casts = [
+        'status' => 'boolean'
+    ];
 
     public function path()
     {
@@ -25,5 +28,15 @@ class Institute extends Model
 
         $this->logo = $file_name;
         $this->save();
+    }
+
+    public function admin()
+    {
+        return $this->hasOne(Admin::class);
+    }
+
+    public function plan()
+    {
+        return $this->hasOne(InstitutePlan::class);
     }
 }

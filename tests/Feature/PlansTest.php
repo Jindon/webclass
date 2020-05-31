@@ -39,7 +39,9 @@ class PlansTest extends TestCase
             ->assertRedirect(route('superadmin.plans.index'))
             ->assertSessionHas(['message' => 'Plan updated successfully!']);
 
-        $this->assertDatabaseHas('plans', $attributes);
+        $this->assertDatabaseHas('plans', array_merge($attributes, [
+            'id' => $plan->id
+        ]));
     }
 
     /** @test */

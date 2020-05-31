@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Superadmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\Institute;
 use App\Models\InstitutePlan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Hash;
 
 class InstitutesController extends Controller
 {
@@ -31,25 +34,93 @@ class InstitutesController extends Controller
                 $institute->addLogo($request->file('logo'));
             }
 
-            InstitutePlan::updateOrCreate([
+            InstitutePlan::create([
                 'institute_id' => $institute->id,
                 'plan_id' => $request->plan_id,
                 'start_date' => Carbon::now()->toDate(),
                 'end_date' => Carbon::now()->addYear()->toDate(),
             ]);
 
-            return redirect()->route('superadmin.institutes.index');
+            Admin::create($request->admin);
+
+            return redirect()->route('superadmin.institutes.index')->with([
+                'message' => 'Institute created successfully!'
+            ]);
         } catch (\Exception $error) {
             abort(503);
         }
     }
-    private function validator(Request $request)
+
+    public function update(Request $request, Institute $institute)
     {
-        $request->validate([
+        $this->validator($request, 'update');
+        $institute->update($request->except('admin'));
+
+        if ($request->has('admin')) {
+            $institute->admin()->update(Arr::except($request->admin, [
+                'password', 'password_confirmation'
+            ]));
+            if(! empty($request->admin->password)) {
+                $institute->admin->password = Hash::make($request->password);
+                $institute->save();
+            }
+        }
+
+        if (! empty($institute->plan)) {
+            $institute->plan()->update([
+                'institute_id' => $institute->id,
+                'plan_id' => $request->plan_id,
+            ]);
+        }
+
+        return redirect()->route('superadmin.institutes.index')->with([
+            'message' => 'Institute updated successfully!'
+        ]);
+    }
+
+    public function manageSubscription(Request $request, Institute $institute)
+    {
+        $institute->plan()->update($request->only('start_date','end_date'));
+
+        return redirect()->route('superadmin.institutes.index')->with([
+            'message' => "Institute's subscription updated successfully!"
+        ]);
+    }
+
+    public function delete(Institute $institute)
+    {
+        $institute->delete();
+
+        return redirect()->route('superadmin.institutes.index')->with([
+            'message' => "Institute deleted successfully!"
+        ]);
+    }
+
+    private function validator(Request $request, $type = 'create')
+    {
+        $rules = [
             'name' => 'required',
             'board' => 'required',
-            'logo' => 'image|max:5120|mimes:jpeg,png',
-            'plan_id' => 'integer'
-        ]);
+            'logo' => 'nullable|image|max:5120|mimes:jpeg,png',
+            'plan_id' => 'required|integer',
+            'admin.name' => 'required',
+            'admin.email' => 'email|required',
+            'admin.country_code' => 'nullable|digits:2',
+            'admin.phone' => 'nullable|digits:10',
+        ];
+        switch ($type) {
+            case 'create':
+                $request->validate(array_merge($rules, [
+                    'admin.password' => 'required|min:6|confirmed'
+                ]));
+                break;
+            case 'update':
+                $request->validate(array_merge($rules, [
+                    'admin.password' => 'sometimes|min:6|confirmed'
+                ]));
+                break;
+            default:
+                $request->validate($rules);
+        }
     }
 }

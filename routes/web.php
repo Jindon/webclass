@@ -53,6 +53,9 @@ Route::prefix('/superadmin')->name('superadmin.')->namespace('Superadmin')->grou
 
         Route::get('/institutes','InstitutesController@index')->name('institutes.index');
         Route::post('/institutes','InstitutesController@store')->name('institutes.store');
+        Route::patch('/institutes/{institute}','InstitutesController@update')->name('institutes.update');
+        Route::patch('/institutes/subscription/{institute}','InstitutesController@manageSubscription')->name('institutes.manageSubscription');
+        Route::delete('/institutes/{institute}','InstitutesController@delete')->name('institutes.delete');
     });
 
 });
