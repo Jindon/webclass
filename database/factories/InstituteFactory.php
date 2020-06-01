@@ -10,6 +10,7 @@ $factory->define(Institute::class, function (Faker $faker) {
         'name' => $faker->word,
         'board' => $faker->word,
         'logo' => null,
+        'subdomain' => \Illuminate\Support\Str::snake($faker->word),
         'status' => true,
     ];
 });

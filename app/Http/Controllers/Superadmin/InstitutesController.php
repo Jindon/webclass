@@ -27,7 +27,7 @@ class InstitutesController extends Controller
 
         try {
             $institute = Institute::create($request->only([
-                'name', 'board'
+                'name', 'board', 'subdomain'
             ]));
 
             if ($request->hasFile('logo')) {
@@ -53,8 +53,13 @@ class InstitutesController extends Controller
 
     public function update(Request $request, Institute $institute)
     {
-        $this->validator($request, 'update');
-        $institute->update($request->except('admin'));
+        $this->validator($request, 'update', $institute);
+
+        if ($request->hasFile('logo')) {
+            $institute->addLogo($request->file('logo'));
+        }
+
+        $institute->update($request->except('admin', 'plan_id'));
 
         if ($request->has('admin')) {
             $institute->admin()->update(Arr::except($request->admin, [
@@ -96,7 +101,7 @@ class InstitutesController extends Controller
         ]);
     }
 
-    private function validator(Request $request, $type = 'create')
+    private function validator(Request $request, $type = 'create', Institute $institute = null)
     {
         $rules = [
             'name' => 'required',
@@ -111,12 +116,14 @@ class InstitutesController extends Controller
         switch ($type) {
             case 'create':
                 $request->validate(array_merge($rules, [
-                    'admin.password' => 'required|min:6|confirmed'
+                    'admin.password' => 'required|min:6|confirmed',
+                    'subdomain' => 'required|unique:institutes,subdomain',
                 ]));
                 break;
             case 'update':
                 $request->validate(array_merge($rules, [
-                    'admin.password' => 'sometimes|min:6|confirmed'
+                    'admin.password' => 'sometimes|min:6|confirmed',
+                    'subdomain' => 'required|unique:institutes,subdomain' . $institute->id,
                 ]));
                 break;
             default:

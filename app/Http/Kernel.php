@@ -65,5 +65,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         'assign.guard' => \App\Http\Middleware\AssignGuard::class,
+        'subdomain' => \App\Http\Middleware\SubdomainMiddleware::class,
     ];
 }

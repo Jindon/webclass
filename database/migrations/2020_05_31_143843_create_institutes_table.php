@@ -17,6 +17,7 @@ class CreateInstitutesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('board');
+            $table->string('subdomain')->unique();
             $table->string('logo')->nullable();
             $table->boolean('status')->default(true)->comment('1: Active, 0: Inactive');
             $table->timestamps();

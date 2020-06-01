@@ -59,3 +59,32 @@ Route::prefix('/superadmin')->name('superadmin.')->namespace('Superadmin')->grou
     });
 
 });
+
+Route::domain('{subdomain}.' . env('SITE_DOMAIN', 'webclass.com'))->middleware('subdomain')
+    ->prefix('/admin')->name('admin.')->namespace('Admin')->group(function() {
+
+        Route::namespace('Auth')->group(function(){
+
+            //Login Routes
+            Route::get('/login','LoginController@showLoginForm')->name('loginForm');
+            Route::post('/login','LoginController@login')->name('login');
+            Route::post('/logout','LoginController@logout')->name('logout');
+
+            //Forgot Password Routes
+            Route::get('/password/reset','ForgotPasswordController@showLinkRequestForm')->name('password.request');
+            Route::post('/password/email','ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+
+            //Reset Password Routes
+            Route::get('/password/reset/{token}','ResetPasswordController@showResetForm')->name('password.reset');
+            Route::post('/password/reset','ResetPasswordController@reset')->name('password.update');
+
+        });
+
+    Route::middleware('assign.guard:admin,admin/login')->group(function() {
+        Route::get('/home','HomeController@index')->name('home');
+
+        Route::get('/settings','SettingsController@index')->name('settings.index');
+        Route::patch('/settings','SettingsController@update')->name('settings.update');
+    });
+
+});

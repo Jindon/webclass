@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use http\Env\Request;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\File;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 class Institute extends Model
 {
-    protected $fillable = ['name', 'board', 'logo'];
+    protected $fillable = ['name', 'board', 'logo', 'subdomain'];
     protected $casts = [
         'status' => 'boolean'
     ];

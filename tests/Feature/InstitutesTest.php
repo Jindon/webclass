@@ -67,6 +67,7 @@ class InstitutesTest extends TestCase
     }
     /** @test */
     public function superadmin_can_update_an_institute() {
+        Storage::fake('public');
         $this->signIn('superadmin');
 
         $basic_plan = factory(Plan::class)->create();
@@ -84,6 +85,7 @@ class InstitutesTest extends TestCase
             'password_confirmation' => 'welcome'
         ]);
 
+        $attributes['logo'] = UploadedFile::fake()->image('logo.jpg')->size(1000);
         $attributes['plan_id'] = $premium_plan->id;
         $attributes['admin'] = $admin_attributes;
 
@@ -108,6 +110,8 @@ class InstitutesTest extends TestCase
             'plan_id' => $premium_plan->id,
             'status' => true
         ]);
+
+        Storage::disk('public')->assertExists("logos/{$institute->logo}");
 
         $this->assertTrue(Hash::check('welcome', $institute->admin->password), 'Password is not updated correctly!');
     }
