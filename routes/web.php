@@ -85,6 +85,20 @@ Route::domain('{subdomain}.' . env('SITE_DOMAIN', 'webclass.com'))->middleware('
 
         Route::get('/settings','SettingsController@index')->name('settings.index');
         Route::patch('/settings','SettingsController@update')->name('settings.update');
+
+        Route::get('/subjects','SubjectsController@index')->name('subjects.index');
+        Route::post('/subjects','SubjectsController@store')->name('subjects.store');
+        Route::patch('/subjects/{subject}','SubjectsController@update')->name('subjects.update');
+        Route::delete('/subjects/{subject}','SubjectsController@delete')->name('subjects.delete');
+
+        Route::post('/sections','SectionsController@store')->name('sections.store');
+        Route::patch('/sections/{section}','SectionsController@update')->name('sections.update');
+        Route::delete('/sections/{section}','SectionsController@delete')->name('sections.delete');
+
+        Route::get('/classes','ClassesController@index')->name('classes.index');
+        Route::post('/classes','ClassesController@store')->name('classes.store');
+        Route::patch('/classes/{iclass}','ClassesController@update')->name('classes.update');
+        Route::delete('/classes/{iclass}','ClassesController@delete')->name('classes.delete');
     });
 
 });

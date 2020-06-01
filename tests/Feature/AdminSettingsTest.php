@@ -29,7 +29,6 @@ class AdminSettingsTest extends TestCase
 
     /** @test */
     public function admin_can_update_related_institute_settings() {
-        $this->withoutExceptionHandling();
         Storage::fake('public');
         $institute = factory(Institute::class)->create(['subdomain' => 'institute']);
         $admin = factory(Admin::class)->create(['institute_id' => $institute->id]);

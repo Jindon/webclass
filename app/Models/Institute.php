@@ -37,4 +37,19 @@ class Institute extends Model
     {
         return $this->hasOne(InstitutePlan::class);
     }
+
+    public function subjects()
+    {
+        return $this->hasMany(Subject::class);
+    }
+
+    public function iclasses()
+    {
+        return $this->hasMany(Iclass::class)->with(['sections']);
+    }
+
+    public function sections()
+    {
+        return $this->hasMany(Section::class);
+    }
 }
